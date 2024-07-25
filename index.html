@@ -15,6 +15,7 @@
             height: 100vh;
             margin: 0;
             padding: 0;
+            background-color: #ffffff;
         }
         #blocklyArea {
             flex: 1;
@@ -56,7 +57,7 @@
             <button onclick="generateCode()">Generate HTML & CSS</button>
             <textarea id="codeOutput" readonly></textarea>
             <h2>Preview:</h2>
-            <div id="previewArea"></div>
+                <iframe id="previewFrame" style="width: 100%; height: 400px; border: 1px solid #ccc;"></iframe>
         </div>
     </div>
 
@@ -78,6 +79,7 @@
         </category>
         <category name="Media" colour="#a5675b">
             <block type="image"></block>
+            <block type="video"></block>
         </category>
         <category name="Links" colour="#a55b80">
             <block type="link"></block>
@@ -88,13 +90,75 @@
             <block type="css_property"></block>
         </category>
         <category name="JavaScript" colour="#fbbd08">
+            <block type="script"></block>
             <block type="js_console_log"></block>
             <block type="api_request"></block>
             <block type="js_button"></block>
             <block type="js_if"></block>
             <block type="js_else"></block>
+            <block type="fetch_request"></block>
         </category>
+        <category name="String Methods" colour="#ffcc00">
+            <block type="string_remove"></block>
+            <block type="string_to_string"></block>
+            <block type="string_to_lowercase"></block>
+            <block type="string_to_titlecase"></block>
+        </category>
+        </category>
+        <category name="Form Elements" colour="#5b9bd5">
+            <block type="input_field"></block>
+            <block type="select_field"></block>
+            <block type="select_option"></block>
+            <block type="textarea"></block>
+        </category>
+        <category name="Interactive Elements" colour="#ff6f61">
+            <block type="modal"></block>
+            <block type="tooltip"></block>
+            <block type="dropdown"></block>
+            <block type="dropdown_option"></block>
+        </category>
+        <category name="Variables" colour="#f39c12">
+            <block type="variables_get"></block>
+            <block type="variables_set"></block>
+            <block type="variables_create"></block>
+        </category>
+        <category name="Event Listeners" colour="#8e24aa">
+            <block type="event_listener_click"></block>
+            <block type="event_listener_mouseover"></block>
+        </category>
+        <category name="DOM Manipulation" colour="#3f51b5">
+            <block type="dom_get_element_by_id"></block>
+            <block type="dom_set_inner_html"></block>
+            <block type="dom_append_child"></block>
+            <block type="dom_show_modal"></block>
+            <block type="dom_close"></block>
+        </category>
+        <category name="Loops & Conditions" colour="#009688">
+            <block type="loop_for"></block>
+            <block type="loop_while"></block>
+            <block type="condition_if"></block>
+            <block type="condition_if_else"></block>
+            <block type="condition_if_else_if"></block>
+        </category>
+        <category name="JSON" colour="#ff9900">
+            <block type="json_parse"></block>
+            <block type="json_stringify"></block>
+        </category>
+        <category name="LocalStorage" colour="#ff6600">
+            <block type="localstorage_set"></block>
+            <block type="localstorage_get"></block>
+            <block type="localstorage_remove"></block>
+        </category>
+        <category name="IndexedDB" colour="#ff6600">
+            <block type="indexeddb_open"></block>
+            <block type="indexeddb_add"></block>
+            <block type="indexeddb_set"></block>
+            <block type="indexeddb_get"></block>
+            <block type="indexeddb_delete"></block>
+        </category>
+    </category>
     </xml>
+
 
     <script>
         var workspace = Blockly.inject('blocklyDiv', {
@@ -145,6 +209,19 @@
                 this.setNextStatement(true, null);
                 this.setColour(110);
                 this.setTooltip("Body section");
+                this.setHelpUrl("");
+            }
+        };
+        Blockly.Blocks['script'] = {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField("Script");
+                this.appendStatementInput("content")
+                    .setCheck(null);
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(280);
+                this.setTooltip("Script tag");
                 this.setHelpUrl("");
             }
         };
@@ -242,6 +319,30 @@
                 this.setTooltip("Image tag");
                 this.setHelpUrl("");
             }
+        };
+
+        Blockly.Blocks['video'] = {
+          init: function() {
+            this.appendDummyInput()
+                .appendField("Video");
+            this.appendValueInput("SRC")
+                .setCheck("String")
+                .appendField("Source URL");
+            this.appendValueInput("ALT")
+                .setCheck("String")
+                .appendField("Alt Text");
+            this.appendValueInput("WIDTH")
+                .setCheck("Number")
+                .appendField("Width");
+            this.appendValueInput("HEIGHT")
+                .setCheck("Number")
+                .appendField("Height");
+            this.setPreviousStatement(true, null);
+            this.setNextStatement(true, null);
+            this.setColour(200);
+            this.setTooltip("Embed a video element");
+            this.setHelpUrl("");
+          }
         };
 
         Blockly.Blocks['link'] = {
@@ -387,6 +488,987 @@
             }
         };
 
+        Blockly.Blocks['fetch_request'] = {
+          init: function() {
+            this.appendDummyInput()
+                .appendField("Fetch API Request");
+            this.appendValueInput("URL")
+                .setCheck("String")
+                .appendField("URL");
+            this.appendDummyInput()
+                .appendField("Method")
+                .appendField(new Blockly.FieldDropdown([["GET", "GET"], ["POST", "POST"], ["PUT", "PUT"], ["DELETE", "DELETE"]]), "METHOD");
+            this.appendValueInput("HEADERS")
+                .setCheck("Array")
+                .appendField("Headers");
+            this.appendValueInput("BODY")
+                .setCheck("String")
+                .appendField("Body");
+            this.appendStatementInput("ONLOAD")
+                .setCheck(null)
+                .appendField("On Load");
+            this.appendStatementInput("ONERROR")
+                .setCheck(null)
+                .appendField("On Error");
+            this.setPreviousStatement(true, null);
+            this.setNextStatement(true, null);
+            this.setColour(160);
+            this.setTooltip("Make an HTTP request using the Fetch API");
+            this.setHelpUrl("");
+          }
+        };
+
+        Blockly.Blocks['input_field'] = {
+          init: function() {
+            this.appendDummyInput()
+                .appendField("Input Field");
+            this.appendValueInput("TYPE")
+                .setCheck("String")
+                .appendField("Type");
+            this.appendValueInput("NAME")
+                .setCheck("String")
+                .appendField("Name");
+            this.appendValueInput("PLACEHOLDER")
+                .setCheck("String")
+                .appendField("Placeholder");
+            this.setPreviousStatement(true, null);
+            this.setNextStatement(true, null);
+            this.setColour(180);
+            this.setTooltip("Create an input field");
+            this.setHelpUrl("");
+          }
+        };
+
+        // Select Field Block
+        Blockly.Blocks['select_field'] = {
+          init: function() {
+            this.appendDummyInput()
+                .appendField("Select Field");
+            this.appendValueInput("NAME")
+                .setCheck("String")
+                .appendField("Name");
+            this.appendStatementInput("OPTIONS")
+                .setCheck(null)
+                .appendField("Options");
+            this.setPreviousStatement(true, null);
+            this.setNextStatement(true, null);
+            this.setColour(180);
+            this.setTooltip("Create a select dropdown");
+            this.setHelpUrl("");
+          }
+        };
+
+        Blockly.Blocks['select_option'] = {
+          init: function() {
+            this.appendValueInput("VALUE")
+                .setCheck("String")
+                .appendField("Option");
+            this.appendValueInput("TEXT")
+                .setCheck("String")
+                .appendField("Text");
+            this.setPreviousStatement(true, "select_field");
+            this.setNextStatement(true, "select_field");
+            this.setColour(200);
+            this.setTooltip("Select dropdown option");
+            this.setHelpUrl("");
+          }
+        };
+
+        // Textarea Block
+        Blockly.Blocks['textarea'] = {
+          init: function() {
+            this.appendDummyInput()
+                .appendField("Textarea");
+            this.appendValueInput("NAME")
+                .setCheck("String")
+                .appendField("Name");
+            this.appendValueInput("ROWS")
+                .setCheck("Number")
+                .appendField("Rows");
+            this.appendValueInput("COLS")
+                .setCheck("Number")
+                .appendField("Cols");
+            this.appendValueInput("PLACEHOLDER")
+                .setCheck("String")
+                .appendField("Placeholder");
+            this.setPreviousStatement(true, null);
+            this.setNextStatement(true, null);
+            this.setColour(180);
+            this.setTooltip("Create a textarea");
+            this.setHelpUrl("");
+          }
+        };
+
+        // Interactive Elements
+
+        // Modal Block
+        Blockly.Blocks['modal'] = {
+          init: function() {
+            this.appendDummyInput()
+                .appendField("Modal");
+            this.appendValueInput("ID")
+                .setCheck("String")
+                .appendField("ID");
+            this.appendValueInput("TITLE")
+                .setCheck("String")
+                .appendField("Title");
+            this.appendStatementInput("CONTENT")
+                .setCheck(null)
+                .appendField("Content");
+            this.setPreviousStatement(true, null);
+            this.setNextStatement(true, null);
+            this.setColour(160);
+            this.setTooltip("Create a modal dialog");
+            this.setHelpUrl("");
+          }
+        };
+
+        // Tooltip Block
+        Blockly.Blocks['tooltip'] = {
+          init: function() {
+            this.appendDummyInput()
+                .appendField("Tooltip");
+            this.appendValueInput("TEXT")
+                .setCheck("String")
+                .appendField("Text");
+            this.appendValueInput("TARGET")
+                .setCheck("String")
+                .appendField("Target Element ID");
+            this.setPreviousStatement(true, null);
+            this.setNextStatement(true, null);
+            this.setColour(160);
+            this.setTooltip("Create a tooltip");
+            this.setHelpUrl("");
+          }
+        };
+
+        // Dropdown Block
+        Blockly.Blocks['dropdown'] = {
+          init: function() {
+            this.appendDummyInput()
+                .appendField("Dropdown");
+            this.appendValueInput("ID")
+                .setCheck("String")
+                .appendField("ID");
+            this.appendStatementInput("OPTIONS")
+                .setCheck(null)
+                .appendField("Options");
+            this.setPreviousStatement(true, null);
+            this.setNextStatement(true, null);
+            this.setColour(160);
+            this.setTooltip("Create a dropdown menu");
+            this.setHelpUrl("");
+          }
+        };
+
+        Blockly.Blocks['dropdown_option'] = {
+          init: function() {
+            this.appendValueInput("VALUE")
+                .setCheck("String")
+                .appendField("Option Value");
+            this.appendValueInput("TEXT")
+                .setCheck("String")
+                .appendField("Option Text");
+            this.setPreviousStatement(true, "dropdown");
+            this.setNextStatement(true, "dropdown");
+            this.setColour(180);
+            this.setTooltip("Dropdown option");
+            this.setHelpUrl("");
+          }
+        };
+
+        Blockly.Blocks['variables_get'] = {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField("Get variable")
+                    .appendField(new Blockly.FieldVariable("item"), "VAR");
+                this.setOutput(true, null);
+                this.setColour(330);
+                this.setTooltip("Get the value of a variable");
+                this.setHelpUrl("");
+            }
+        };
+
+        Blockly.Blocks['variables_set'] = {
+            init: function() {
+                this.appendValueInput("VALUE")
+                    .setCheck(null)
+                    .appendField("Set")
+                    .appendField(new Blockly.FieldVariable("item"), "VAR")
+                    .appendField("to");
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(330);
+                this.setTooltip("Set the value of a variable");
+                this.setHelpUrl("");
+            }
+        };
+
+        Blockly.Blocks['variables_create'] = {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField("Create variable")
+                    .appendField(new Blockly.FieldTextInput("new_variable"), "NAME");
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(330);
+                this.setTooltip("Create a new variable");
+                this.setHelpUrl("");
+            }
+        };
+
+        // Event Listeners
+        Blockly.Blocks['event_listener_click'] = {
+            init: function() {
+                this.appendValueInput("ELEMENT")
+                    .setCheck("String")
+                    .appendField("Add click event listener to element with ID");
+                this.appendStatementInput("ONCLICK")
+                    .setCheck(null)
+                    .appendField("On click");
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(230);
+                this.setTooltip("Add a click event listener to an element.");
+                this.setHelpUrl("");
+            }
+        };
+
+        Blockly.JavaScript['event_listener_click'] = function(block) {
+            var value_element = Blockly.JavaScript.valueToCode(block, 'ELEMENT', Blockly.JavaScript.ORDER_ATOMIC);
+            var statements_onclick = Blockly.JavaScript.statementToCode(block, 'ONCLICK');
+            var code = `
+                document.getElementById(${value_element}).addEventListener('click', function() {
+                    ${statements_onclick}
+                });
+            `;
+            return code;
+        };
+
+        Blockly.Blocks['event_listener_mouseover'] = {
+            init: function() {
+                this.appendValueInput("ELEMENT")
+                    .setCheck("String")
+                    .appendField("Add mouseover event listener to element with ID");
+                this.appendStatementInput("ONMOUSEOVER")
+                    .setCheck(null)
+                    .appendField("On mouseover");
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(230);
+                this.setTooltip("Add a mouseover event listener to an element.");
+                this.setHelpUrl("");
+            }
+        };
+
+        Blockly.defineBlocksWithJsonArray([
+            // Other blocks
+
+            {
+                "type": "indexeddb_set",
+                "message0": "set in IndexedDB object store %1 key %2 to value %3",
+                "args0": [
+                    {
+                        "type": "input_value",
+                        "name": "STORE",
+                        "check": "String"
+                    },
+                    {
+                        "type": "input_value",
+                        "name": "KEY",
+                        "check": "String"
+                    },
+                    {
+                        "type": "input_value",
+                        "name": "VALUE"
+                    }
+                ],
+                "colour": 240,
+                "tooltip": "Sets a key-value pair in an IndexedDB object store.",
+                "helpUrl": ""
+            }
+        ]);
+
+        Blockly.JavaScript['event_listener_mouseover'] = function(block) {
+            var value_element = Blockly.JavaScript.valueToCode(block, 'ELEMENT', Blockly.JavaScript.ORDER_ATOMIC);
+            var statements_onmouseover = Blockly.JavaScript.statementToCode(block, 'ONMOUSEOVER');
+            var code = `
+                document.getElementById(${value_element}).addEventListener('mouseover', function() {
+                    ${statements_onmouseover}
+                });
+            `;
+            return code;
+        };
+
+        // DOM Manipulation
+        Blockly.Blocks['dom_get_element_by_id'] = {
+            init: function() {
+                this.appendValueInput("ID")
+                    .setCheck("String")
+                    .appendField("Get element by ID");
+                this.setOutput(true, "Element");
+                this.setColour(180);
+                this.setTooltip("Get an element by its ID.");
+                this.setHelpUrl("");
+            }
+        };
+
+        Blockly.JavaScript['dom_get_element_by_id'] = function(block) {
+            var value_id = Blockly.JavaScript.valueToCode(block, 'ID', Blockly.JavaScript.ORDER_ATOMIC);
+            var code = 'document.getElementById(' + value_id + ')';
+            return [code, Blockly.JavaScript.ORDER_NONE];
+        };
+
+        Blockly.Blocks['dom_set_inner_html'] = {
+            init: function() {
+                this.appendValueInput("ELEMENT")
+                    .setCheck("Element")
+                    .appendField("Set inner HTML of element");
+                this.appendValueInput("HTML")
+                    .setCheck("String")
+                    .appendField("to");
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(180);
+                this.setTooltip("Set the inner HTML of an element.");
+                this.setHelpUrl("");
+            }
+        };
+
+        Blockly.JavaScript['indexeddb_set'] = function(block) {
+            var store = Blockly.JavaScript.valueToCode(block, 'STORE', Blockly.JavaScript.ORDER_ATOMIC);
+            var key = Blockly.JavaScript.valueToCode(block, 'KEY', Blockly.JavaScript.ORDER_ATOMIC);
+            var value = Blockly.JavaScript.valueToCode(block, 'VALUE', Blockly.JavaScript.ORDER_ATOMIC);
+
+            var code = `
+                var request = indexedDB.open('MyDatabase');
+                request.onsuccess = function(event) {
+                    var db = event.target.result;
+                    var transaction = db.transaction([${store}], 'readwrite');
+                    var objectStore = transaction.objectStore(${store});
+                    var request = objectStore.put(${value}, ${key});
+                    request.onsuccess = function() {
+                        console.log('Item set in the store');
+                    };
+                    request.onerror = function(event) {
+                        console.error('Set error:', event.target.errorCode);
+                    };
+                };
+            `;
+            return code;
+        };
+
+        Blockly.JavaScript['dom_set_inner_html'] = function(block) {
+            var value_element = Blockly.JavaScript.valueToCode(block, 'ELEMENT', Blockly.JavaScript.ORDER_ATOMIC);
+            var value_html = Blockly.JavaScript.valueToCode(block, 'HTML', Blockly.JavaScript.ORDER_ATOMIC);
+            var code = `
+                ${value_element}.innerHTML = ${value_html};
+            `;
+            return code;
+        };
+
+        Blockly.Blocks['dom_append_child'] = {
+            init: function() {
+                this.appendValueInput("PARENT")
+                    .setCheck("Element")
+                    .appendField("Append child");
+                this.appendValueInput("CHILD")
+                    .setCheck("Element")
+                    .appendField("to");
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(180);
+                this.setTooltip("Append a child element to a parent element.");
+                this.setHelpUrl("");
+            }
+        };
+
+        Blockly.JavaScript['dom_append_child'] = function(block) {
+            var value_parent = Blockly.JavaScript.valueToCode(block, 'PARENT', Blockly.JavaScript.ORDER_ATOMIC);
+            var value_child = Blockly.JavaScript.valueToCode(block, 'CHILD', Blockly.JavaScript.ORDER_ATOMIC);
+            var code = `
+                ${value_parent}.appendChild(${value_child});
+            `;
+            return code;
+        };
+
+        // Loops & Conditions
+        Blockly.Blocks['loop_for'] = {
+            init: function() {
+                this.appendValueInput("INIT")
+                    .setCheck("Number")
+                    .appendField("For (initialize");
+                this.appendValueInput("CONDITION")
+                    .setCheck("Boolean")
+                    .appendField("condition;");
+                this.appendValueInput("UPDATE")
+                    .setCheck("Number")
+                    .appendField("update)");
+                this.appendStatementInput("DO")
+                    .setCheck(null)
+                    .appendField("do");
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(120);
+                this.setTooltip("For loop");
+                this.setHelpUrl("");
+            }
+        };
+
+        Blockly.JavaScript['loop_for'] = function(block) {
+            var value_init = Blockly.JavaScript.valueToCode(block, 'INIT', Blockly.JavaScript.ORDER_ATOMIC);
+            var value_condition = Blockly.JavaScript.valueToCode(block, 'CONDITION', Blockly.JavaScript.ORDER_ATOMIC);
+            var value_update = Blockly.JavaScript.valueToCode(block, 'UPDATE', Blockly.JavaScript.ORDER_ATOMIC);
+            var statements_do = Blockly.JavaScript.statementToCode(block, 'DO');
+            var code = `
+                for (${value_init}; ${value_condition}; ${value_update}) {
+                    ${statements_do}
+                }
+            `;
+            return code;
+        };
+
+        Blockly.Blocks['loop_while'] = {
+            init: function() {
+                this.appendValueInput("CONDITION")
+                    .setCheck("Boolean")
+                    .appendField("While");
+                this.appendStatementInput("DO")
+                    .setCheck(null)
+                    .appendField("do");
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(120);
+                this.setTooltip("While loop");
+                this.setHelpUrl("");
+            }
+        };
+
+        Blockly.JavaScript['loop_while'] = function(block) {
+            var value_condition = Blockly.JavaScript.valueToCode(block, 'CONDITION', Blockly.JavaScript.ORDER_ATOMIC);
+            var statements_do = Blockly.JavaScript.statementToCode(block, 'DO');
+            var code = `
+                while (${value_condition}) {
+                    ${statements_do}
+                }
+            `;
+            return code;
+        };
+
+        Blockly.Blocks['condition_if'] = {
+            init: function() {
+                this.appendValueInput("CONDITION")
+                    .setCheck("Boolean")
+                    .appendField("If");
+                this.appendStatementInput("DO")
+                    .setCheck(null)
+                    .appendField("do");
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(210);
+                this.setTooltip("If statement");
+                this.setHelpUrl("");
+            }
+        };
+
+        Blockly.JavaScript['condition_if'] = function(block) {
+            var value_condition = Blockly.JavaScript.valueToCode(block, 'CONDITION', Blockly.JavaScript.ORDER_ATOMIC);
+            var statements_do = Blockly.JavaScript.statementToCode(block, 'DO');
+            var code = `
+                if (${value_condition}) {
+                    ${statements_do}
+                }
+            `;
+            return code;
+        };
+
+        Blockly.Blocks['condition_if_else'] = {
+            init: function() {
+                this.appendValueInput("CONDITION")
+                    .setCheck("Boolean")
+                    .appendField("If");
+                this.appendStatementInput("DO")
+                    .setCheck(null)
+                    .appendField("do");
+                this.appendStatementInput("ELSE")
+                    .setCheck(null)
+                    .appendField("Else do");
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(210);
+                this.setTooltip("If-else statement");
+                this.setHelpUrl("");
+            }
+        };
+
+        Blockly.JavaScript['condition_if_else'] = function(block) {
+            var value_condition = Blockly.JavaScript.valueToCode(block, 'CONDITION', Blockly.JavaScript.ORDER_ATOMIC);
+            var statements_do = Blockly.JavaScript.statementToCode(block, 'DO');
+            var statements_else = Blockly.JavaScript.statementToCode(block, 'ELSE');
+            var code = `
+                if (${value_condition}) {
+                    ${statements_do}
+                } else {
+                    ${statements_else}
+                }
+            `;
+            return code;
+        };
+
+        Blockly.Blocks['condition_if_else_if'] = {
+            init: function() {
+                this.appendValueInput("CONDITION")
+                    .setCheck("Boolean")
+                    .appendField("If");
+                this.appendStatementInput("DO")
+                    .setCheck(null)
+                    .appendField("do");
+                this.appendStatementInput("ELSE_IF")
+                    .setCheck(null)
+                    .appendField("Else if");
+                this.appendStatementInput("ELSE")
+                    .setCheck(null)
+                    .appendField("Else do");
+                this.setPreviousStatement(true, null);
+                this.setNextStatement(true, null);
+                this.setColour(210);
+                this.setTooltip("If-else-if-else statement");
+                this.setHelpUrl("");
+            }
+        };
+
+        Blockly.defineBlocksWithJsonArray([
+            {
+                "type": "string_remove",
+                "message0": "remove %1 from %2",
+                "args0": [
+                    {
+                        "type": "input_value",
+                        "name": "SUBSTRING",
+                        "check": "String"
+                    },
+                    {
+                        "type": "input_value",
+                        "name": "STRING",
+                        "check": "String"
+                    }
+                ],
+                "output": "String",
+                "colour": 160,
+                "tooltip": "Removes a substring from a string.",
+                "helpUrl": ""
+            },
+            {
+                "type": "string_to_string",
+                "message0": "convert %1 to string",
+                "args0": [
+                    {
+                        "type": "input_value",
+                        "name": "VALUE"
+                    }
+                ],
+                "output": "String",
+                "colour": 160,
+                "tooltip": "Converts a value to a string.",
+                "helpUrl": ""
+            },
+            {
+                "type": "string_to_lowercase",
+                "message0": "convert %1 to lowercase",
+                "args0": [
+                    {
+                        "type": "input_value",
+                        "name": "STRING",
+                        "check": "String"
+                    }
+                ],
+                "output": "String",
+                "colour": 160,
+                "tooltip": "Converts a string to lowercase.",
+                "helpUrl": ""
+            },
+            {
+                "type": "string_to_titlecase",
+                "message0": "convert %1 to title case",
+                "args0": [
+                    {
+                        "type": "input_value",
+                        "name": "STRING",
+                        "check": "String"
+                    }
+                ],
+                "output": "String",
+                "colour": 160,
+                "tooltip": "Converts a string to title case.",
+                "helpUrl": ""
+            }
+        ]);
+
+        Blockly.defineBlocksWithJsonArray([
+            // LocalStorage Blocks
+            {
+                "type": "localstorage_set",
+                "message0": "set localStorage key %1 to value %2",
+                "args0": [
+                    {
+                        "type": "input_value",
+                        "name": "KEY",
+                        "check": "String"
+                    },
+                    {
+                        "type": "input_value",
+                        "name": "VALUE",
+                        "check": "String"
+                    }
+                ],
+                "colour": 190,
+                "tooltip": "Sets an item in localStorage.",
+                "helpUrl": ""
+            },
+            {
+                "type": "localstorage_get",
+                "message0": "get localStorage value for key %1",
+                "args0": [
+                    {
+                        "type": "input_value",
+                        "name": "KEY",
+                        "check": "String"
+                    }
+                ],
+                "output": "String",
+                "colour": 190,
+                "tooltip": "Gets an item from localStorage.",
+                "helpUrl": ""
+            },
+            {
+                "type": "localstorage_remove",
+                "message0": "remove localStorage key %1",
+                "args0": [
+                    {
+                        "type": "input_value",
+                        "name": "KEY",
+                        "check": "String"
+                    }
+                ],
+                "colour": 190,
+                "tooltip": "Removes an item from localStorage.",
+                "helpUrl": ""
+            },
+
+            // IndexedDB Blocks
+            {
+                "type": "indexeddb_open",
+                "message0": "open IndexedDB with name %1 version %2",
+                "args0": [
+                    {
+                        "type": "input_value",
+                        "name": "NAME",
+                        "check": "String"
+                    },
+                    {
+                        "type": "input_value",
+                        "name": "VERSION",
+                        "check": "Number"
+                    }
+                ],
+                "colour": 240,
+                "tooltip": "Opens an IndexedDB database.",
+                "helpUrl": ""
+            },
+            {
+                "type": "indexeddb_add",
+                "message0": "add %1 to IndexedDB object store %2 with key %3",
+                "args0": [
+                    {
+                        "type": "input_value",
+                        "name": "VALUE"
+                    },
+                    {
+                        "type": "input_value",
+                        "name": "STORE",
+                        "check": "String"
+                    },
+                    {
+                        "type": "input_value",
+                        "name": "KEY",
+                        "check": "String"
+                    }
+                ],
+                "colour": 240,
+                "tooltip": "Adds an item to an IndexedDB object store.",
+                "helpUrl": ""
+            },
+            {
+                "type": "indexeddb_get",
+                "message0": "get from IndexedDB object store %1 with key %2",
+                "args0": [
+                    {
+                        "type": "input_value",
+                        "name": "STORE",
+                        "check": "String"
+                    },
+                    {
+                        "type": "input_value",
+                        "name": "KEY",
+                        "check": "String"
+                    }
+                ],
+                "output": "String",
+                "colour": 240,
+                "tooltip": "Gets an item from an IndexedDB object store.",
+                "helpUrl": ""
+            },
+            {
+                "type": "indexeddb_delete",
+                "message0": "delete from IndexedDB object store %1 with key %2",
+                "args0": [
+                    {
+                        "type": "input_value",
+                        "name": "STORE",
+                        "check": "String"
+                    },
+                    {
+                        "type": "input_value",
+                        "name": "KEY",
+                        "check": "String"
+                    }
+                ],
+                "colour": 240,
+                "tooltip": "Deletes an item from an IndexedDB object store.",
+                "helpUrl": ""
+            }
+        ]);
+
+        // LocalStorage
+        Blockly.JavaScript['localstorage_set'] = function(block) {
+            var key = Blockly.JavaScript.valueToCode(block, 'KEY', Blockly.JavaScript.ORDER_ATOMIC);
+            var value = Blockly.JavaScript.valueToCode(block, 'VALUE', Blockly.JavaScript.ORDER_ATOMIC);
+            var code = 'localStorage.setItem(' + key + ', ' + value + ');\n';
+            return code;
+        };
+
+        Blockly.JavaScript['localstorage_get'] = function(block) {
+            var key = Blockly.JavaScript.valueToCode(block, 'KEY', Blockly.JavaScript.ORDER_ATOMIC);
+            var code = 'localStorage.getItem(' + key + ')';
+            return [code, Blockly.JavaScript.ORDER_ATOMIC];
+        };
+
+        Blockly.JavaScript['localstorage_remove'] = function(block) {
+            var key = Blockly.JavaScript.valueToCode(block, 'KEY', Blockly.JavaScript.ORDER_ATOMIC);
+            var code = 'localStorage.removeItem(' + key + ');\n';
+            return code;
+        };
+
+        // IndexedDB
+        Blockly.JavaScript['indexeddb_open'] = function(block) {
+            var name = Blockly.JavaScript.valueToCode(block, 'NAME', Blockly.JavaScript.ORDER_ATOMIC);
+            var version = Blockly.JavaScript.valueToCode(block, 'VERSION', Blockly.JavaScript.ORDER_ATOMIC);
+            var code = `
+                var request = indexedDB.open(${name}, ${version});
+                request.onsuccess = function(event) {
+                    var db = event.target.result;
+                    console.log('Database opened:', db);
+                };
+                request.onerror = function(event) {
+                    console.error('Database error:', event.target.errorCode);
+                };
+            `;
+            return code;
+        };
+
+        Blockly.JavaScript['indexeddb_add'] = function(block) {
+            var value = Blockly.JavaScript.valueToCode(block, 'VALUE', Blockly.JavaScript.ORDER_ATOMIC);
+            var store = Blockly.JavaScript.valueToCode(block, 'STORE', Blockly.JavaScript.ORDER_ATOMIC);
+            var key = Blockly.JavaScript.valueToCode(block, 'KEY', Blockly.JavaScript.ORDER_ATOMIC);
+            var code = `
+                var request = indexedDB.open('MyDatabase');
+                request.onsuccess = function(event) {
+                    var db = event.target.result;
+                    var transaction = db.transaction([${store}], 'readwrite');
+                    var objectStore = transaction.objectStore(${store});
+                    var request = objectStore.add(${value}, ${key});
+                    request.onsuccess = function() {
+                        console.log('Item added to the store');
+                    };
+                    request.onerror = function(event) {
+                        console.error('Add error:', event.target.errorCode);
+                    };
+                };
+            `;
+            return code;
+        };
+
+        Blockly.JavaScript['indexeddb_get'] = function(block) {
+            var store = Blockly.JavaScript.valueToCode(block, 'STORE', Blockly.JavaScript.ORDER_ATOMIC);
+            var key = Blockly.JavaScript.valueToCode(block, 'KEY', Blockly.JavaScript.ORDER_ATOMIC);
+            var code = `
+                var request = indexedDB.open('MyDatabase');
+                request.onsuccess = function(event) {
+                    var db = event.target.result;
+                    var transaction = db.transaction([${store}]);
+                    var objectStore = transaction.objectStore(${store});
+                    var request = objectStore.get(${key});
+                    request.onsuccess = function() {
+                        console.log('Item:', request.result);
+                    };
+                    request.onerror = function(event) {
+                        console.error('Get error:', event.target.errorCode);
+                    };
+                };
+            `;
+            return [code, Blockly.JavaScript.ORDER_ATOMIC];
+        };
+
+        Blockly.JavaScript['indexeddb_delete'] = function(block) {
+            var store = Blockly.JavaScript.valueToCode(block, 'STORE', Blockly.JavaScript.ORDER_ATOMIC);
+            var key = Blockly.JavaScript.valueToCode(block, 'KEY', Blockly.JavaScript.ORDER_ATOMIC);
+            var code = `
+                var request = indexedDB.open('MyDatabase');
+                request.onsuccess = function(event) {
+                    var db = event.target.result;
+                    var transaction = db.transaction([${store}], 'readwrite');
+                    var objectStore = transaction.objectStore(${store});
+                    var request = objectStore.delete(${key});
+                    request.onsuccess = function() {
+                        console.log('Item deleted from the store');
+                    };
+                    request.onerror = function(event) {
+                        console.error('Delete error:', event.target.errorCode);
+                    };
+                };
+            `;
+            return code;
+        };
+
+        Blockly.JavaScript['string_remove'] = function(block) {
+            var substring = Blockly.JavaScript.valueToCode(block, 'SUBSTRING', Blockly.JavaScript.ORDER_ATOMIC);
+            var str = Blockly.JavaScript.valueToCode(block, 'STRING', Blockly.JavaScript.ORDER_ATOMIC);
+            var code = str + '.replace(' + substring + ', \'\')';
+            return [code, Blockly.JavaScript.ORDER_NONE];
+        };
+
+        Blockly.JavaScript['string_to_string'] = function(block) {
+            var value = Blockly.JavaScript.valueToCode(block, 'VALUE', Blockly.JavaScript.ORDER_ATOMIC);
+            var code = 'String(' + value + ')';
+            return [code, Blockly.JavaScript.ORDER_NONE];
+        };
+
+        Blockly.JavaScript['string_to_lowercase'] = function(block) {
+            var str = Blockly.JavaScript.valueToCode(block, 'STRING', Blockly.JavaScript.ORDER_ATOMIC);
+            var code = str + '.toLowerCase()';
+            return [code, Blockly.JavaScript.ORDER_NONE];
+        };
+
+        Blockly.JavaScript['string_to_titlecase'] = function(block) {
+            var str = Blockly.JavaScript.valueToCode(block, 'STRING', Blockly.JavaScript.ORDER_ATOMIC);
+            var code = str + '.replace(/\\b\\w/g, function(l) { return l.toUpperCase(); })';
+            return [code, Blockly.JavaScript.ORDER_NONE];
+        };
+
+        Blockly.defineBlocksWithJsonArray([
+            {
+                "type": "dom_show_modal",
+                "message0": "show modal with id %1",
+                "args0": [
+                    {
+                        "type": "input_value",
+                        "name": "ID",
+                        "check": "String"
+                    }
+                ],
+                "colour": 210,
+                "tooltip": "Shows a modal dialog.",
+                "helpUrl": ""
+            },
+            {
+                "type": "dom_close",
+                "message0": "close modal with id %1",
+                "args0": [
+                    {
+                        "type": "input_value",
+                        "name": "ID",
+                        "check": "String"
+                    }
+                ],
+                "colour": 210,
+                "tooltip": "Closes a modal dialog.",
+                "helpUrl": ""
+            }
+        ]);
+
+        Blockly.JavaScript['dom_show_modal'] = function(block) {
+            var id = Blockly.JavaScript.valueToCode(block, 'ID', Blockly.JavaScript.ORDER_ATOMIC);
+            var code = 'document.getElementById(' + id + ').showModal()';
+            return code + '\n';
+        };
+
+        Blockly.JavaScript['dom_close'] = function(block) {
+            var id = Blockly.JavaScript.valueToCode(block, 'ID', Blockly.JavaScript.ORDER_ATOMIC);
+            var code = 'document.getElementById(' + id + ').close()';
+            return code + '\n';
+        };
+
+        Blockly.defineBlocksWithJsonArray([
+            {
+                "type": "json_parse",
+                "message0": "parse %1",
+                "args0": [
+                    {
+                        "type": "input_value",
+                        "name": "JSON",
+                        "check": "String"
+                    }
+                ],
+                "output": "Object",
+                "colour": 230,
+                "tooltip": "Parses a JSON string into an object.",
+                "helpUrl": ""
+            },
+            {
+                "type": "json_stringify",
+                "message0": "stringify %1",
+                "args0": [
+                    {
+                        "type": "input_value",
+                        "name": "OBJECT"
+                    }
+                ],
+                "output": "String",
+                "colour": 230,
+                "tooltip": "Stringifies an object into a JSON string.",
+                "helpUrl": ""
+            }
+        ]);
+
+        Blockly.JavaScript['json_parse'] = function(block) {
+            var json = Blockly.JavaScript.valueToCode(block, 'JSON', Blockly.JavaScript.ORDER_ATOMIC);
+            var code = 'JSON.parse(' + json + ')';
+            return [code, Blockly.JavaScript.ORDER_NONE];
+        };
+
+        Blockly.JavaScript['json_stringify'] = function(block) {
+            var obj = Blockly.JavaScript.valueToCode(block, 'OBJECT', Blockly.JavaScript.ORDER_ATOMIC);
+            var code = 'JSON.stringify(' + obj + ')';
+            return [code, Blockly.JavaScript.ORDER_NONE];
+        };
+
+        Blockly.JavaScript['condition_if_else_if'] = function(block) {
+            var value_condition = Blockly.JavaScript.valueToCode(block, 'CONDITION', Blockly.JavaScript.ORDER_ATOMIC);
+            var statements_do = Blockly.JavaScript.statementToCode(block, 'DO');
+            var statements_else_if = Blockly.JavaScript.statementToCode(block, 'ELSE_IF');
+            var statements_else = Blockly.JavaScript.statementToCode(block, 'ELSE');
+            var code = `
+                if (${value_condition}) {
+                    ${statements_do}
+                } else if (${statements_else_if}) {
+                    ${statements_else_if}
+                } else {
+                    ${statements_else}
+                }
+            `;
+            return code;
+        };
+
         Blockly.JavaScript['html'] = function(block) {
             var statements_content = Blockly.JavaScript.statementToCode(block, 'content');
             var code = '<html>\n' + statements_content + '</html>\n';
@@ -424,6 +1506,11 @@
             return code;
         };
 
+        Blockly.JavaScript['script'] = function(block) {
+            var statements_content = Blockly.JavaScript.statementToCode(block, 'content');
+            return '<script>\n' + statements_content + '\n<\/script>\n';
+        };
+
         Blockly.JavaScript['text'] = function(block) {
             var text_content = block.getFieldValue('CONTENT');
             var code = text_content;
@@ -447,6 +1534,16 @@
             var value_alt = Blockly.JavaScript.valueToCode(block, 'ALT', Blockly.JavaScript.ORDER_ATOMIC);
             var code = '<img src="' + value_src + '" alt="' + value_alt + '">\n';
             return code;
+        };
+
+        Blockly.JavaScript['video'] = function(block) {
+          var value_src = Blockly.JavaScript.valueToCode(block, 'SRC', Blockly.JavaScript.ORDER_ATOMIC);
+          var value_alt = Blockly.JavaScript.valueToCode(block, 'ALT', Blockly.JavaScript.ORDER_ATOMIC);
+          var value_width = Blockly.JavaScript.valueToCode(block, 'WIDTH', Blockly.JavaScript.ORDER_ATOMIC);
+          var value_height = Blockly.JavaScript.valueToCode(block, 'HEIGHT', Blockly.JavaScript.ORDER_ATOMIC);
+
+          var code = '<video src="' + value_src + '" alt="' + value_alt + '" width="' + value_width + '" height="' + value_height + '" controls></video>\n';
+          return code;
         };
 
         Blockly.JavaScript['link'] = function(block) {
@@ -527,10 +1624,145 @@
             return code;
         };
 
+        Blockly.JavaScript['fetch_request'] = function(block) {
+          var value_url = Blockly.JavaScript.valueToCode(block, 'URL', Blockly.JavaScript.ORDER_ATOMIC);
+          var dropdown_method = block.getFieldValue('METHOD');
+          var value_headers = Blockly.JavaScript.valueToCode(block, 'HEADERS', Blockly.JavaScript.ORDER_ATOMIC);
+          var value_body = Blockly.JavaScript.valueToCode(block, 'BODY', Blockly.JavaScript.ORDER_ATOMIC);
+          var statements_onload = Blockly.JavaScript.statementToCode(block, 'ONLOAD');
+          var statements_onerror = Blockly.JavaScript.statementToCode(block, 'ONERROR');
+
+          var code = `
+            fetch(${value_url}, {
+              method: '${dropdown_method}',
+              headers: ${value_headers},
+              body: ${value_body}
+            })
+            .then(response => response.json())
+            .then(data => {
+              ${statements_onload}
+            })
+            .catch(error => {
+              ${statements_onerror}
+            });
+          `;
+          return code;
+        };
+
+        Blockly.JavaScript['input_field'] = function(block) {
+          var value_type = Blockly.JavaScript.valueToCode(block, 'TYPE', Blockly.JavaScript.ORDER_ATOMIC);
+          var value_name = Blockly.JavaScript.valueToCode(block, 'NAME', Blockly.JavaScript.ORDER_ATOMIC);
+          var value_placeholder = Blockly.JavaScript.valueToCode(block, 'PLACEHOLDER', Blockly.JavaScript.ORDER_ATOMIC);
+          var code = '<input type="' + value_type + '" name="' + value_name + '" placeholder="' + value_placeholder + '">\n';
+          return code;
+        };
+
+        // Select Field
+        Blockly.JavaScript['select_field'] = function(block) {
+          var value_name = Blockly.JavaScript.valueToCode(block, 'NAME', Blockly.JavaScript.ORDER_ATOMIC);
+          var statements_options = Blockly.JavaScript.statementToCode(block, 'OPTIONS');
+          var code = '<select name="' + value_name + '">\n' + statements_options + '</select>\n';
+          return code;
+        };
+
+        Blockly.JavaScript['select_option'] = function(block) {
+          var value_text = Blockly.JavaScript.valueToCode(block, 'TEXT', Blockly.JavaScript.ORDER_ATOMIC);
+          var value_value = Blockly.JavaScript.valueToCode(block, 'VALUE', Blockly.JavaScript.ORDER_ATOMIC);
+          var code = '<option value="' + value_value + '">' + value_text + '</option>\n';
+          return code;
+        };
+
+        // Textarea
+        Blockly.JavaScript['textarea'] = function(block) {
+          var value_name = Blockly.JavaScript.valueToCode(block, 'NAME', Blockly.JavaScript.ORDER_ATOMIC);
+          var value_rows = Blockly.JavaScript.valueToCode(block, 'ROWS', Blockly.JavaScript.ORDER_ATOMIC);
+          var value_cols = Blockly.JavaScript.valueToCode(block, 'COLS', Blockly.JavaScript.ORDER_ATOMIC);
+          var value_placeholder = Blockly.JavaScript.valueToCode(block, 'PLACEHOLDER', Blockly.JavaScript.ORDER_ATOMIC);
+          var code = '<textarea name="' + value_name + '" rows="' + value_rows + '" cols="' + value_cols + '" placeholder="' + value_placeholder + '"></textarea>\n';
+          return code;
+        };
+
+        // Interactive Elements
+
+        // Modal
+        Blockly.JavaScript['modal'] = function(block) {
+          var value_id = Blockly.JavaScript.valueToCode(block, 'ID', Blockly.JavaScript.ORDER_ATOMIC);
+          var value_title = Blockly.JavaScript.valueToCode(block, 'TITLE', Blockly.JavaScript.ORDER_ATOMIC);
+          var statements_content = Blockly.JavaScript.statementToCode(block, 'CONTENT');
+          var code = '<div id="' + value_id + '" class="modal">\n' +
+                     '  <div class="modal-header">\n' +
+                     '    <h2>' + value_title + '</h2>\n' +
+                     '  </div>\n' +
+                     '  <div class="modal-content">\n' +
+                     statements_content +
+                     '  </div>\n' +
+                     '</div>\n';
+          return code;
+        };
+
+        // Tooltip
+        Blockly.JavaScript['tooltip'] = function(block) {
+          var value_text = Blockly.JavaScript.valueToCode(block, 'TEXT', Blockly.JavaScript.ORDER_ATOMIC);
+          var value_target = Blockly.JavaScript.valueToCode(block, 'TARGET', Blockly.JavaScript.ORDER_ATOMIC);
+          var code = '<div class="tooltip" data-target="' + value_target + '">' + value_text + '</div>\n';
+          return code;
+        };
+
+        // Dropdown
+        Blockly.JavaScript['dropdown'] = function(block) {
+          var value_id = Blockly.JavaScript.valueToCode(block, 'ID', Blockly.JavaScript.ORDER_ATOMIC);
+          var statements_options = Blockly.JavaScript.statementToCode(block, 'OPTIONS');
+          var code = '<select id="' + value_id + '">\n' + statements_options + '</select>\n';
+          return code;
+        };
+
+        Blockly.JavaScript['dropdown_option'] = function(block) {
+          var value_text = Blockly.JavaScript.valueToCode(block, 'TEXT', Blockly.JavaScript.ORDER_ATOMIC);
+          var value_value = Blockly.JavaScript.valueToCode(block, 'VALUE', Blockly.JavaScript.ORDER_ATOMIC);
+          var code = '<option value="' + value_value + '">' + value_text + '</option>\n';
+          return code;
+        };
+
+        Blockly.JavaScript['variables_get'] = function(block) {
+            var variable = Blockly.JavaScript.variableDB_.getName(block.getFieldValue('VAR'), Blockly.Variables.NAME_TYPE);
+            var code = variable;
+            return [code, Blockly.JavaScript.ORDER_ATOMIC];
+        };
+
+        Blockly.JavaScript['variables_set'] = function(block) {
+            var variable = Blockly.JavaScript.variableDB_.getName(block.getFieldValue('VAR'), Blockly.Variables.NAME_TYPE);
+            var value = Blockly.JavaScript.valueToCode(block, 'VALUE', Blockly.JavaScript.ORDER_ASSIGNMENT) || '0';
+            var code = 'var ' + variable + ' = ' + value + ';\n';
+            return code;
+        };
+
+        Blockly.JavaScript['variables_create'] = function(block) {
+            var variable = Blockly.JavaScript.variableDB_.getName(block.getFieldValue('NAME'), Blockly.Variables.NAME_TYPE);
+            var code = 'var ' + variable + ';\n';
+            return code;
+        };
+
         function generateCode() {
             var code = Blockly.JavaScript.workspaceToCode(workspace);
             document.getElementById('codeOutput').value = code;
-            document.getElementById('previewArea').innerHTML = code;
+            updatePreview(code)
+        }
+
+        function updatePreview(code) {
+            // Create a Blob from the code
+            var blob = new Blob([code], { type: 'text/html' });
+
+            // Create a FileReader to convert the Blob to Base64
+            var reader = new FileReader();
+            reader.onloadend = function() {
+                var base64 = reader.result.split(',')[1];
+                var dataUrl = 'data:text/html;base64,' + base64;
+
+                // Set the src of the iframe to the data URL
+                var iframe = document.getElementById('previewFrame');
+                iframe.src = dataUrl;
+            };
+            reader.readAsDataURL(blob);
         }
     </script>
 </body>
